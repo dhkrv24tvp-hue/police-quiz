@@ -189,7 +189,7 @@ function feedbackHTML(it, ok){
   let h = '<div class="verdict '+(ok?'ok':'no')+'">'
       + '<span class="pill '+(ok?'ok':'no')+'">'+(ok?'정답':'오답')+'</span>'
       + '정답은 '+it.a;
-  if(it.tag) h += '<span class="pill dec">'+esc(it.tag)+'</span>';
+  if(it.tag && it.tag!=='변형지문') h += '<span class="pill dec">'+esc(it.tag)+'</span>';
   h += '</div>';
   h += '<p>'+esc(it.e)+'</p>';
   if(it.c) h += '<div class="cs"><b>'+esc(it.c)+'</b></div>';
