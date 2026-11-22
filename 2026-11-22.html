@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>11월 22일 경찰 암기 데일리 퀴즈</title>
+<style>
+  :root {
+    --bg-page: #f2f4f7;
+    --bg-card: #ffffff;
+    --text-main: #111827;
+    --text-sub: #4b5563;
+    --text-muted: #9ca3af;
+    --primary: #2563eb;
+    --primary-bg: #eff6ff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --border: #e5e7eb;
+    --radius-card: 20px;
+    --radius-btn: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 520px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 14px 4px;
+  }
+  .header h1 {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-badge {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .progress-wrap {
+    width: 100%;
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 25%;
+    transition: width 0.3s ease;
+  }
+  .quiz-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cat-badge {
+    background: var(--primary-bg);
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .cat-badge.review {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  .q-num {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .question-body {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--text-main);
+    word-break: keep-all;
+    min-height: 85px;
+    padding-top: 4px;
+  }
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn-ox {
+    padding: 18px 0;
+    font-size: 26px;
+    font-weight: 900;
+    border-radius: var(--radius-btn);
+    border: 2px solid var(--border);
+    background: #ffffff;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-ox:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-ox.correct {
+    background: var(--success-bg) !important;
+    border-color: var(--success) !important;
+    color: var(--success) !important;
+  }
+  .btn-ox.wrong {
+    background: var(--danger-bg) !important;
+    border-color: var(--danger) !important;
+    color: var(--danger) !important;
+  }
+  .explanation-card {
+    display: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    animation: fadeIn 0.2s ease;
+  }
+  .explanation-card.correct {
+    background: var(--success-bg);
+    border: 1.5px solid rgba(22, 163, 74, 0.3);
+  }
+  .explanation-card.wrong {
+    background: var(--danger-bg);
+    border: 1.5px solid rgba(220, 38, 38, 0.3);
+  }
+  .exp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .explanation-card.correct .exp-header { color: var(--success); }
+  .explanation-card.wrong .exp-header { color: var(--danger); }
+  .schedule-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #ffffff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid currentColor;
+  }
+  .exp-content {
+    color: var(--text-sub);
+    font-weight: 500;
+    word-break: keep-all;
+  }
+  .btn-next {
+    display: none;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: var(--radius-btn);
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: auto;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: opacity 0.15s ease;
+  }
+  .btn-next:active { opacity: 0.85; }
+
+  .complete-box {
+    display: none;
+    text-align: center;
+    padding: 30px 10px 10px 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+  .complete-icon { font-size: 52px; }
+  .complete-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .complete-desc { font-size: 14px; color: var(--text-sub); line-height: 1.5; margin-bottom: 8px; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    background: var(--bg-page);
+    border-radius: 12px;
+    padding: 16px 12px;
+  }
+  .stat-card .val { font-size: 26px; font-weight: 900; color: var(--primary); }
+  .stat-card .lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
+  .wrong-review-box {
+    width: 100%;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+    margin-bottom: 12px;
+  }
+  .wrong-review-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--danger);
+    margin-bottom: 8px;
+  }
+  .wrong-review-item {
+    font-size: 12px;
+    color: #7f1d1d;
+    line-height: 1.45;
+    padding: 6px 0;
+    border-bottom: 1px dashed #fca5a5;
+  }
+  .wrong-review-item:last-child { border-bottom: none; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body ontouchstart="">
+
+<div class="header">
+  <h1>📝 오늘의 암기 퀴즈</h1>
+  <div class="score-badge" id="score-badge">진행 1 / 12</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar" id="p-bar" style="width: 25%;"></div>
+</div>
+
+<div class="quiz-card" id="quiz-card">
+  <!-- Active Question Area -->
+  <div id="play-area">
+    <div class="badge-row">
+      <span class="cat-badge" id="cat-text">경찰학 · 법령 형식 [FSRS 신규]</span>
+      <span class="q-num" id="q-num">1 / 12</span>
+    </div>
+
+    <div class="question-body" id="q-text">
+      경찰관 직무집행법(경직법)의 위임 사항 중 복제에 관한 사항은 행정안전부령으로 정하고, 그 외 대다수 사항은 대통령령으로 정한다.
+    </div>
+
+    <div class="choice-grid" id="choice-grid">
+      <button type="button" class="btn-ox" id="btn-o" onclick="choose('O')">⭕️ O</button>
+      <button type="button" class="btn-ox" id="btn-x" onclick="choose('X')">❌ X</button>
+    </div>
+
+    <div class="explanation-card" id="exp-card">
+      <div class="exp-header">
+        <span id="exp-title">정답입니다!</span>
+        <span class="schedule-badge" id="schedule-badge" style="display:none;">내일 점심 재출제 큐에 저장</span>
+      </div>
+      <div class="exp-content" id="exp-body">해설 내용</div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-next" onclick="goNext()">다음 문제로 ➔</button>
+  </div>
+
+  <!-- Complete Screen -->
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon" id="res-icon">🎯</div>
+    <div class="complete-title" id="res-title">오늘의 12문제 완료!</div>
+    <div class="complete-desc" id="res-desc">수고하셨습니다! 틀린 문제는 내일 점심 1시 퀴즈에 자동 재출제됩니다.</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="val" id="res-correct">0</div>
+        <div class="lbl">정답</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="res-wrong">0</div>
+        <div class="lbl">오답 (내일 재출제)</div>
+      </div>
+    </div>
+
+    <div class="wrong-review-box" id="wrong-box" style="display:none;">
+      <div class="wrong-review-title">📌 내일 점심 1시에 다시 도전할 오답 목록</div>
+      <div id="wrong-list"></div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-copy-result" style="display:block; background:#374151; margin-bottom:8px;" onclick="copyResult()">📋 결과 복사하기</button>
+    <button type="button" class="btn-next" style="display:block;" onclick="restart()">처음부터 다시 풀기 ↺</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    "cat": "경찰학 · 청문·공청회·예고 기한 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "행정절차법상 청문은 개최 10일 전까지 당사자에게(청문주재자는 7일 전), 공청회는 개최 14일 전까지(예외 7일 전) 통지해야 하며, 자치법규의 입법예고 기간은 특별한 사정이 없으면 40일 이상으로 한다.",
+    "ans": "X",
+    "point": "청문(당사자 10일/주재자 7일) · 공청회(14일, 예외 7일) · 입법예고(법령 40일 이상 / 자치법규 20일 이상)",
+    "exp": "틀렸습니다! 법령의 입법예고 기간은 40일 이상이지만, 자치법규의 입법예고 기간(및 행정예고 기간)은 특별한 사정이 없으면 20일 이상으로 합니다. 청문(당사자 10일 전·청문주재자 7일 전)과 공청회(14일 전·예외 7일 전)는 맞습니다."
+  },
+  {
+    "cat": "경찰학 · 보호 법익 구분 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "경찰법령상 112 신고의 접수·처리, 감금된 자의 구호, 범죄피해자 구조청구권이 보호하는 법익은 국민의 '생명·신체'에 한정되며, '재산'은 포함되지 않는다.",
+    "ans": "O",
+    "point": "112 신고·감금자 구호·범죄피해자 구조청구권 → 생명·신체만 (재산 X)",
+    "exp": "정확합니다! 112 신고 접수·처리, 감금자 구호, 범죄피해자 구조청구권, 직접적 사람 통제·억제 작용은 국민의 '생명·신체'만 보호 법익으로 삼습니다(장소·공간 출입 등은 재산 포함)."
+  },
+  {
+    "cat": "형소법 · 항고 및 불복 체계 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "법원의 구속취소 결정에 대해서는 즉시항고할 수 있고, 구속집행정지 결정에 대해서는 보통항고할 수 있으며, 체포·구속적부심사의 기각 결정 및 석방 결정에 대해서는 항고할 수 없다.",
+    "ans": "O",
+    "point": "구속취소(즉시항고) · 구속집행정지(보통항고) · 적부심 기각/석방(항고 불가)",
+    "exp": "정확합니다! 구속취소 결정은 즉시항고, 구속집행정지 결정(및 피의자 보석 허가 결정)은 보통항고 대상이며, 체포·구속적부심사의 기각 결정과 석방 결정에 대해서는 모두 항고할 수 없습니다."
+  },
+  {
+    "cat": "경찰학 · 이해충돌방지법 [신규]",
+    "isReview": false,
+    "q": "공직자의 이해충돌 방지법상 가족 채용 제한이나 수의계약 체결 제한을 위반한 경우에는 3천만원 이하의 과태료, 사적 이해관계자 신고·회피 의무를 위반한 경우에는 2천만원 이하의 과태료, 고위공직자의 민간부문 업무활동 내역 미제출이나 퇴직자 사적 접촉 미신고의 경우에는 1천만원 이하의 과태료에 처한다.",
+    "ans": "O",
+    "point": "가족채용·수의계약(3천) / 사적이해관계 신고 등(2천) / 민간업무·퇴직자 접촉(1천)",
+    "exp": "정확합니다! 이해충돌방지법 과태료는 3천(가족 채용·수의계약 제한 위반), 2천(사적 이해관계자 신고·회피 의무 위반 등 대다수), 1천(민간부문 업무활동 내역 미제출·퇴직자 사적 접촉 미신고)으로 구분됩니다."
+  },
+  {
+    "cat": "경찰학 · 위원회 위원 수 [신규]",
+    "isReview": false,
+    "q": "위원회별 위원 수 중 국가경찰위원회, 시·도자치경찰위원회, 보안관찰처분심의위원회는 모두 7인으로 구성되지만, 개인정보보호위원회는 9인, 정보공개위원회는 11인, 국민권익위원회는 15인으로 구성된다.",
+    "ans": "O",
+    "point": "국가·자치경찰위·보안관찰(7인) / 개인정보(9인) / 정보공개(11인) / 권익위(15인)",
+    "exp": "정확합니다! 7인(국가·자치경찰위, 보안관찰처분심의위), 7~9인(손실보상심의위), 9인(개인정보보호위), 10인(신상정보심의위), 11인(정보공개위), 15인(국민권익위)을 정확히 기억하셨네요."
+  },
+  {
+    "cat": "경찰학 · 보관기간 및 기한 [신규]",
+    "isReview": false,
+    "q": "실종아동 프로파일링 시스템의 정보 보관기간은 18세 미만 아동과 장애인·치매환자 모두 동일하게 5년으로 규정되어 있다.",
+    "ans": "X",
+    "point": "실종아동 프로파일링: 18세 미만 아동 5년 / 장애인·치매환자 10년",
+    "exp": "틀렸습니다! 실종아동 프로파일링 시스템 보관기간은 18세 미만 아동의 경우 5년이지만, 장애인·치매환자(지적·자폐성·정신장애인 및 치매환자)는 10년입니다."
+  },
+  {
+    "cat": "경찰학 · 행정행위 성질 [신규]",
+    "isReview": false,
+    "q": "행정행위 중 '특허'는 법규특허가 가능하고 신청 없는 특허나 수정특허는 허용되지 않으며, '허가'는 법규허가가 불가능하고 신청 없는 허가는 가능하나 수정허가는 허용되지 않는다.",
+    "ans": "O",
+    "point": "특허(법규특허 O, 신청없는 X, 수정 X) / 허가(법규허가 X, 신청없는 O, 수정 X)",
+    "exp": "정확합니다! 하명(법규 O), 허가(법규 X·신청없는 O·수정 X), 특허(법규 O·신청없는 X·수정 X), 인가(법규 X·신청없는 X·수정 X) 체계를 정확히 구분하셨네요."
+  },
+  {
+    "cat": "경찰학 · 경찰윤리(Cohen & Feldberg) [FSRS 복습]",
+    "isReview": false,
+    "q": "Cohen & Feldberg의 경찰윤리 기준 중 자신의 개인적 경험이나 감정에 치우쳐 절도범에게 분풀이를 하거나 가정폭력 현장에서 편견으로 일방을 단정하는 행위는 '역할 한계와 팀워크' 원칙 위반의 대표적 사례이다.",
+    "ans": "X",
+    "point": "개인 감정·분풀이 → '냉정하고 객관적인 접근' / 동료 면박주기 → '역할 한계·팀워크'",
+    "exp": "틀렸습니다! 개인적 경험이나 감정 개입 금지는 '냉정하고 객관적인 접근' 원칙에 해당하며, '역할 한계와 팀워크' 위반의 대표 사례는 동료에게 면박주기 등 팀워크를 해치는 행동입니다."
+  },
+  {
+    "cat": "형법 총론 · 신분과 공범 [FSRS 복습]",
+    "isReview": false,
+    "q": "비신분자인 갑이 직계존속이 아닌 타인의 부모를 그 자녀 을과 공동하여 살해한 경우, 형법 제33조 단서에 따라 을은 존속살해죄로 처벌되지만 갑은 보통살인죄로 처벌된다.",
+    "ans": "O",
+    "point": "부진정신분범(제33조 단서): 신분자(존속살해죄) / 비신분자(보통살인죄)",
+    "exp": "정확합니다! 신분으로 인하여 형의 경중이 있는 부진정신분범의 경우 제33조 단서가 적용되어 비신분자에게는 중한 형으로 벌하지 않고 보통살인죄가 성립합니다."
+  },
+  {
+    "cat": "형법 총론 · 자구행위 [FSRS 복습]",
+    "isReview": false,
+    "q": "형법상 자구행위는 타인의 청구권을 보전하기 위해서도 성립할 수 있으며, 야간 기타 불안스러운 상태하에서 공포·경악 등으로 정도를 초과한 때에는 벌하지 아니한다.",
+    "ans": "X",
+    "point": "자구행위: 자기의 청구권만 (타인 X) + 야간과잉 처벌 면제 규정 없음",
+    "exp": "틀렸습니다! 자구행위는 오직 '자기의 청구권'을 보전하기 위한 행위만 해당하고(타인 청구권 X), 정당방위·긴급피난과 달리 야간과잉 행위에 대한 처벌 면제 규정이 없습니다."
+  },
+  {
+    "cat": "형소법 · 경미사건 체포·구속 [FSRS 복습]",
+    "isReview": false,
+    "q": "다액 50만원 이하의 벌금·구류·과료에 해당하는 경미사건이라도, 피의자가 일정한 주거가 없는 때에는 현행범체포·영장체포·구속뿐만 아니라 긴급체포도 예외적으로 허용된다.",
+    "ans": "X",
+    "point": "50만원 이하 경미사건: 현행범·영장체포·구속(주거부정 시 O) / 긴급체포(절대 불가)",
+    "exp": "틀렸습니다! 긴급체포는 사형·무기 또는 장기 3년 이상의 중대범죄를 전제로 하므로, 다액 50만원 이하 경미사건에서는 피의자 주거가 부정하더라도 긴급체포가 절대 불가합니다."
+  },
+  {
+    "cat": "형소법 · 증거동의와 증거능력 [FSRS 복습]",
+    "isReview": false,
+    "q": "수사상 증거보전절차에서 증인신문을 하면서 피고인 및 변호인에게 참여권 통지를 누락하여 작성된 증인신문조서라 하더라도, 피고인이 공판정에서 이를 증거로 함에 동의하면 증거능력을 취득한다.",
+    "ans": "X",
+    "point": "참여권 통지 누락 증거보전조서·위수증·증언번복조서 → 증거동의해도 증거능력 X",
+    "exp": "틀렸습니다! 증거보전절차 참여권 통지를 누락한 증인신문조서는 피고인이 증거동의를 하더라도(위수증·증언번복조서와 마찬가지로) 증거능력을 취득할 수 없습니다."
+  },
+  {
+    "cat": "헌법 · 사회계약론 비교 [신규]",
+    "isReview": false,
+    "q": "홉스(Hobbes)의 사회계약론은 자연상태를 '만인의 만인에 대한 투쟁'으로 보고 권리를 전부 양도하여 절대군주정을 취하므로 저항권을 인정하지 않는 반면, 루소(Rousseau)는 일반의지에 따른 직접민주정치를 주장하였다.",
+    "ans": "O",
+    "point": "홉스(전부 양도·절대군주정·저항권 X) / 로크(일부 양도·제한군주정·저항권 O) / 루소(일반의지·직접민주정)",
+    "exp": "정확합니다! 홉스(전부 양도·절대군주정·저항권 부정), 로크(일부 양도·제한군주정·저항권 인정), 루소(일반의지·직접민주정·전체주의 위험 내포)의 구분이 정확합니다."
+  }
+];
+
+let cur = 0;
+let correctCount = 0;
+let wrongItems = [];
+let answered = false;
+
+function loadQuestion() {
+  if (cur >= QUESTIONS.length) {
+    showResult();
+    return;
+  }
+  answered = false;
+  const item = QUESTIONS[cur];
+
+  const catBadge = document.getElementById('cat-text');
+  catBadge.innerText = item.cat;
+  if (item.isReview) {
+    catBadge.className = 'cat-badge review';
+  } else {
+    catBadge.className = 'cat-badge';
+  }
+
+  document.getElementById('q-num').innerText = `${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('score-badge').innerText = `진행 ${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('p-bar').style.width = `${((cur + 1) / QUESTIONS.length) * 100}%`;
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.className = 'btn-ox';
+  btnX.className = 'btn-ox';
+  btnO.disabled = false;
+  btnX.disabled = false;
+
+  document.getElementById('exp-card').style.display = 'none';
+  document.getElementById('schedule-badge').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function choose(pick) {
+  if (answered) return;
+  answered = true;
+
+  const item = QUESTIONS[cur];
+  const isRight = (pick === item.ans);
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.disabled = true;
+  btnX.disabled = true;
+
+  if (pick === 'O') {
+    btnO.classList.add(isRight ? 'correct' : 'wrong');
+  } else {
+    btnX.classList.add(isRight ? 'correct' : 'wrong');
+  }
+
+  const expCard = document.getElementById('exp-card');
+  const expTitle = document.getElementById('exp-title');
+  const expBody = document.getElementById('exp-body');
+  const schedBadge = document.getElementById('schedule-badge');
+
+  expCard.style.display = 'block';
+  expBody.innerText = item.exp;
+
+  if (isRight) {
+    correctCount++;
+    expCard.className = 'explanation-card correct';
+    expTitle.innerText = `⭕️ 정답입니다! (${item.point})`;
+    schedBadge.style.display = 'none';
+  } else {
+    wrongItems.push(item);
+    expCard.className = 'explanation-card wrong';
+    expTitle.innerText = `❌ 오답입니다! (정답: ${item.ans})`;
+    schedBadge.style.display = 'inline-block';
+  }
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = 'block';
+  if (cur === QUESTIONS.length - 1) {
+    btnNext.innerText = '결과 보기 ➔';
+  } else {
+    btnNext.innerText = '다음 문제로 ➔';
+  }
+}
+
+function goNext() {
+  cur++;
+  loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('play-area').style.display = 'none';
+  const compBox = document.getElementById('complete-box');
+  compBox.style.display = 'flex';
+
+  document.getElementById('res-correct').innerText = `${correctCount}개`;
+  document.getElementById('res-wrong').innerText = `${wrongItems.length}개`;
+
+  const resIcon = document.getElementById('res-icon');
+  const resTitle = document.getElementById('res-title');
+
+  if (correctCount === QUESTIONS.length) {
+    resIcon.innerText = '💯';
+    resTitle.innerText = `${QUESTIONS.length}/${QUESTIONS.length} 전원 만점 마스터!`;
+  } else {
+    resIcon.innerText = '🎯';
+    resTitle.innerText = `${QUESTIONS.length}문제 중 ${correctCount}문제 정답!`;
+  }
+
+  const wrongBox = document.getElementById('wrong-box');
+  const wrongList = document.getElementById('wrong-list');
+  if (wrongItems.length > 0) {
+    wrongBox.style.display = 'block';
+    wrongList.innerHTML = wrongItems.map((w, idx) => `
+      <div class="wrong-review-item">
+        <strong>${idx + 1}. [${w.cat}]</strong><br>
+        ${w.q}<br>
+        👉 <em>정답: ${w.ans} (${w.point})</em>
+      </div>
+    `).join('');
+  } else {
+    wrongBox.style.display = 'none';
+  }
+}
+
+function restart() {
+  cur = 0;
+  correctCount = 0;
+  wrongItems = [];
+  document.getElementById('play-area').style.display = 'block';
+  document.getElementById('complete-box').style.display = 'none';
+  loadQuestion();
+}
+
+function copyResult() {
+  let text = '';
+  if (wrongItems.length === 0) {
+    text = '오늘 퀴즈 다 맞음!';
+  } else {
+    text = `오늘 퀴즈 ${wrongItems.length}개 오답: ` + wrongItems.map(w => w.cat).join(', ');
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy-result');
+    btn.innerText = '✅ 복사 완료! 대화창에 붙여넣기 해 주세요';
+    setTimeout(() => {
+      btn.innerText = '📋 결과 복사하기';
+    }, 2500);
+  }).catch(() => {
+    alert(text);
+  });
+}
+
+// Initial render
+loadQuestion();
+</script>
+</body>
+</html>
