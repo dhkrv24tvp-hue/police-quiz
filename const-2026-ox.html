@@ -236,14 +236,12 @@ $('#list').addEventListener('click', ev=>{
   if(!btn) return;
   const card = btn.closest('.card');
   const id = card.dataset.id;
-  if(state[id]) return;                       // 이미 채점됨
   const it = DATA.find(x=>x.id===id);
   const pick = btn.dataset.ans;
-  state[id] = pick;
+  const before = state[id];
+  state[id] = pick;                            // 다시 눌러 정정 가능
   localStorage.setItem(KEY, JSON.stringify(state));
-  // 즉시 채점 표시
   const ox = card.querySelector('.ox');
-  ox.classList.add('locked');
   ox.querySelector('.o').classList.toggle('sel', pick==='O');
   ox.querySelector('.x').classList.toggle('sel', pick==='X');
   const ok = pick===it.a;
@@ -254,8 +252,8 @@ $('#list').addEventListener('click', ev=>{
       + '<p>'+esc(it.e)+'</p>'
       + (it.c? '<div class="cs"><b>'+esc(it.c)+'</b></div>':'');
   updateStats();
-  // 다음 카드로 자동 이동(선택 사항) — 화면 밖이면 살짝 안내
-  if(ok===false) toast('오답 — 해설을 확인하세요');
+  if(before!==pick && ok===false) toast('오답 — 해설을 확인하세요');
+  else if(before && before!==pick) toast('정답으로 정정했습니다');
 });
 
 function updateStats(){
