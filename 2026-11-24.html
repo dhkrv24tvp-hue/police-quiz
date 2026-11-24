@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>11월 24일 경찰 암기 데일리 퀴즈</title>
+<style>
+  :root {
+    --bg-page: #f2f4f7;
+    --bg-card: #ffffff;
+    --text-main: #111827;
+    --text-sub: #4b5563;
+    --text-muted: #9ca3af;
+    --primary: #2563eb;
+    --primary-bg: #eff6ff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --border: #e5e7eb;
+    --radius-card: 20px;
+    --radius-btn: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 520px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 14px 4px;
+  }
+  .header h1 {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-badge {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .progress-wrap {
+    width: 100%;
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 25%;
+    transition: width 0.3s ease;
+  }
+  .quiz-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cat-badge {
+    background: var(--primary-bg);
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .cat-badge.review {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  .q-num {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .question-body {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--text-main);
+    word-break: keep-all;
+    min-height: 85px;
+    padding-top: 4px;
+  }
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn-ox {
+    padding: 18px 0;
+    font-size: 26px;
+    font-weight: 900;
+    border-radius: var(--radius-btn);
+    border: 2px solid var(--border);
+    background: #ffffff;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-ox:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-ox.correct {
+    background: var(--success-bg) !important;
+    border-color: var(--success) !important;
+    color: var(--success) !important;
+  }
+  .btn-ox.wrong {
+    background: var(--danger-bg) !important;
+    border-color: var(--danger) !important;
+    color: var(--danger) !important;
+  }
+  .explanation-card {
+    display: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    animation: fadeIn 0.2s ease;
+  }
+  .explanation-card.correct {
+    background: var(--success-bg);
+    border: 1.5px solid rgba(22, 163, 74, 0.3);
+  }
+  .explanation-card.wrong {
+    background: var(--danger-bg);
+    border: 1.5px solid rgba(220, 38, 38, 0.3);
+  }
+  .exp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .explanation-card.correct .exp-header { color: var(--success); }
+  .explanation-card.wrong .exp-header { color: var(--danger); }
+  .schedule-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #ffffff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid currentColor;
+  }
+  .exp-content {
+    color: var(--text-sub);
+    font-weight: 500;
+    word-break: keep-all;
+  }
+  .btn-next {
+    display: none;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: var(--radius-btn);
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: auto;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: opacity 0.15s ease;
+  }
+  .btn-next:active { opacity: 0.85; }
+
+  .complete-box {
+    display: none;
+    text-align: center;
+    padding: 30px 10px 10px 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+  .complete-icon { font-size: 52px; }
+  .complete-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .complete-desc { font-size: 14px; color: var(--text-sub); line-height: 1.5; margin-bottom: 8px; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    background: var(--bg-page);
+    border-radius: 12px;
+    padding: 16px 12px;
+  }
+  .stat-card .val { font-size: 26px; font-weight: 900; color: var(--primary); }
+  .stat-card .lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
+  .wrong-review-box {
+    width: 100%;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+    margin-bottom: 12px;
+  }
+  .wrong-review-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--danger);
+    margin-bottom: 8px;
+  }
+  .wrong-review-item {
+    font-size: 12px;
+    color: #7f1d1d;
+    line-height: 1.45;
+    padding: 6px 0;
+    border-bottom: 1px dashed #fca5a5;
+  }
+  .wrong-review-item:last-child { border-bottom: none; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body ontouchstart="">
+
+<div class="header">
+  <h1>📝 오늘의 암기 퀴즈</h1>
+  <div class="score-badge" id="score-badge">진행 1 / 12</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar" id="p-bar" style="width: 25%;"></div>
+</div>
+
+<div class="quiz-card" id="quiz-card">
+  <!-- Active Question Area -->
+  <div id="play-area">
+    <div class="badge-row">
+      <span class="cat-badge" id="cat-text">경찰학 · 경찰활동 모델 [오답 1순위 복습]</span>
+      <span class="q-num" id="q-num">1 / 12</span>
+    </div>
+
+    <div class="question-body" id="q-text">
+      문제지향적 경찰활동(Eck & Spelman)은 범죄정보와 통계 분석기법·지리정보시스템(GIS)을 통합해 범죄다발지역(Hotspot) 집중순찰에 중점을 두며, 조사-분석-대응-평가의 SARA 모델은 정보주도적 경찰활동(ILP)의 핵심 절차이다.
+    </div>
+
+    <div class="choice-grid" id="choice-grid">
+      <button type="button" class="btn-ox" id="btn-o" onclick="choose('O')">⭕️ O</button>
+      <button type="button" class="btn-ox" id="btn-x" onclick="choose('X')">❌ X</button>
+    </div>
+
+    <div class="explanation-card" id="exp-card">
+      <div class="exp-header">
+        <span id="exp-title">정답입니다!</span>
+        <span class="schedule-badge" id="schedule-badge" style="display:none;">내일 점심 재출제 큐에 저장</span>
+      </div>
+      <div class="exp-content" id="exp-body">해설 내용</div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-next" onclick="goNext()">다음 문제로 ➔</button>
+  </div>
+
+  <!-- Complete Screen -->
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon" id="res-icon">🎯</div>
+    <div class="complete-title" id="res-title">오늘의 12문제 완료!</div>
+    <div class="complete-desc" id="res-desc">수고하셨습니다! 틀린 문제는 내일 점심 1시 퀴즈에 자동 재출제됩니다.</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="val" id="res-correct">0</div>
+        <div class="lbl">정답</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="res-wrong">0</div>
+        <div class="lbl">오답 (내일 재출제)</div>
+      </div>
+    </div>
+
+    <div class="wrong-review-box" id="wrong-box" style="display:none;">
+      <div class="wrong-review-title">📌 내일 점심 1시에 다시 도전할 오답 목록</div>
+      <div id="wrong-list"></div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-copy-result" style="display:block; background:#374151; margin-bottom:8px;" onclick="copyResult()">📋 결과 복사하기</button>
+    <button type="button" class="btn-next" style="display:block;" onclick="restart()">처음부터 다시 풀기 ↺</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    "cat": "경찰학 · 경찰활동 모델 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "문제지향적 경찰활동(Eck & Spelman)은 범죄정보와 통계 분석기법·지리정보시스템(GIS)을 통합해 범죄다발지역(Hotspot) 집중순찰에 중점을 두며, 조사-분석-대응-평가의 SARA 모델은 정보주도적 경찰활동(ILP)의 핵심 절차이다.",
+    "ans": "X",
+    "point": "문제지향적 경찰활동(Eck & Spelman의 SARA: 조사-분석-대응-평가) vs 정보주도적 경찰활동(ILP: 통계·GIS·Hotspot)",
+    "exp": "설명 두 가지가 서로 바뀌었습니다! 조사(Scanning)-분석(Analysis)-대응(Response)-평가(Assessment)의 SARA 모델은 '문제지향적 경찰활동(Eck & Spelman)'이고, 범죄정보·통계 분석·GIS·Hotspot 집중순찰은 '정보주도적 경찰활동(ILP)'입니다."
+  },
+  {
+    "cat": "경찰학 · 보관기간 숫자 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "위해성 경찰장비 사용기록과 근무일지의 보관기간은 5년이고, 비밀·암호자재의 보관기간은 3년이며, 112 시스템 입력자료는 일반 신고 3년(연장 2년), 경미 신고 1년(연장 1년)간 보관한다.",
+    "ans": "X",
+    "point": "위해성 경찰장비 사용기록·근무일지(3년) / 비밀·암호자재(5년) / 112 입력자료(일반 3+2년, 경미 1+1년)",
+    "exp": "위해성 경찰장비 사용기록과 근무일지는 '3년', 비밀·암호자재는 '5년' 보관입니다. (바디캠 30일+90일, 112 출동 영상 30일+30일, 112 입력자료 일반 3년+2년 / 경미 1년+1년)"
+  },
+  {
+    "cat": "경찰학 · 이해충돌방지법 [신규]",
+    "isReview": false,
+    "q": "공직자의 이해충돌 방지법 제27조상 직무상 비밀·미공개정보를 이용하여 재물·재산상 이익을 취득한 공직자(7년 7천)와 부정한 방법으로 이를 취득·이용해 이익을 얻은 자(5년 5천)는 징역과 벌금을 병과할 수 있으나, 사적 이익을 위해 이를 이용한 공직자(3년 3천)는 병과 규정이 없다.",
+    "ans": "O",
+    "point": "이해충돌방지법 제27조: 7년 7천·5년 5천만 징역·벌금 병과 가능 / 3년 3천은 병과 불가",
+    "exp": "정확합니다! 현행 이해충돌방지법 제27조 제5항에 따라 제1항(7년 7천)과 제2항 제1호(5년 5천)만 징역과 벌금을 병과할 수 있고, 제3항 제1호(3년 3천)는 병과 규정이 없습니다."
+  },
+  {
+    "cat": "경찰학 · 경직법 손실보상 절차 [신규]",
+    "isReview": false,
+    "q": "경찰관 직무집행법 시행령상 손실보상심의위원회는 위원장 1명을 포함해 7명 이상 9명 이하(과반수는 경찰관 아닌 사람)로 구성하며, 청구 접수일부터 60일 이내(20일 연장 가능)에 보상 여부를 결정하고, 결정일부터 10일 이내에 통지하며, 보상금 지급 결정한 날부터 30일 이내에 지급한다.",
+    "ans": "O",
+    "point": "손실보상심의위 7~9인 / 60일(+20일) 결정 → 결정일부터 10일 내 통지 → 결정한 날부터 30일 내 지급",
+    "exp": "정확합니다! 현행 경직법 시행령 제10조·제11조 기준 접수 후 60일 내 결정(+20일), 결정일부터 10일 내 통지, 보상금 지급 결정한 날부터 30일 내 지급입니다."
+  },
+  {
+    "cat": "경찰학 · CPTED 원칙 [신규]",
+    "isReview": false,
+    "q": "범죄예방 환경설계(CPTED) 5원칙 중 통행로 설계, 출입구 최소화, 차량 차단기 및 방범창 설치는 '영역성의 강화'에 해당하고, 울타리·펜스 설치로 사적·공적 공간의 경계를 구분하는 것은 '자연적 접근통제'에 해당한다.",
+    "ans": "X",
+    "point": "자연적 접근통제(출입구·차단기·방범창) vs 영역성의 강화(울타리·펜스·사적/공적 경계)",
+    "exp": "서로 바뀌었습니다! 출입구 최소화·차량 차단기·방범창 설치는 '자연적 접근통제', 울타리·펜스 등 사적·공적 공간의 경계 구분은 '영역성의 강화'입니다."
+  },
+  {
+    "cat": "경찰학 · 사회계약론 [FSRS 복습]",
+    "isReview": false,
+    "q": "로크(Locke)는 자연상태를 자연법이 지배하나 시비 판단 기준과 집행력이 결여된 상태로 보아 권리의 일부를 신탁(양도)하고 제한군주정과 저항권을 인정한 반면, 홉스(Hobbes)는 권리의 전부 양도와 절대군주정을 주장하며 저항권을 인정하지 않았다.",
+    "ans": "O",
+    "point": "홉스(전부 양도·절대군주·저항권 X) vs 로크(일부 신탁·제한군주·저항권 O) vs 루소(일반의지·직접민주)",
+    "exp": "정확합니다! 홉스는 만인의 투쟁 상태에서 권리 전부 양도·저항권 불인정, 로크는 일부 신탁·제한군주정·저항권 및 정부해산권 인정입니다."
+  },
+  {
+    "cat": "형소법 · 경미범죄 체포·구속 [FSRS 복습]",
+    "isReview": false,
+    "q": "다액 50만원 이하의 벌금·구류·과료에 해당하는 경미사건의 경우, 피의자가 일정한 주거가 없는 때에는 긴급체포할 수 있으나, 일정한 주거가 있는 때에는 영장체포·현행범체포·구속 모두 불가능하다.",
+    "ans": "X",
+    "point": "경미범죄(50만원 이하)는 주거부정이어도 긴급체포 절대 불가 / 영장체포는 출석불응 시 가능",
+    "exp": "틀렸습니다! 긴급체포는 사형·무기·장기 3년 이상의 중대범죄가 전제이므로 경미범죄는 주거가 부정해도 절대 불가합니다. 반면 영장체포는 정당한 이유 없이 출석요구에 응하지 않거나 응하지 않을 우려가 있으면 주거가 있어도 가능합니다."
+  },
+  {
+    "cat": "형소법 · 재판 및 처분 불복 [FSRS 복습]",
+    "isReview": false,
+    "q": "형사소송법상 법원의 구속취소 결정에 대해서는 검사가 즉시항고할 수 있고, 피의자에 대한 보석 허가 결정 및 구속집행정지 결정에 대해서는 보통항고할 수 있으나, 체포·구속적부심사 청구의 기각결정 및 석방결정에 대해서는 항고할 수 없다.",
+    "ans": "O",
+    "point": "구속취소(즉시항고) · 구속집행정지/피의자보석(보통항고) · 적부심 기각/석방(항고 불가)",
+    "exp": "정확합니다! 구속취소는 즉시항고, 구속집행정지와 피의자 보석 허가 결정은 보통항고 대상이며, 체포·구속적부심사의 기각결정 및 석방결정은 불복(항고)할 수 없습니다."
+  },
+  {
+    "cat": "형법 총론 · 책임능력과 미수범 감면 [FSRS 복습]",
+    "isReview": false,
+    "q": "현행 형법상 중지미수는 필요적 감경 또는 면제, 농아자와 방조범(종범)은 필요적 감경, 불능미수는 임의적 감경 또는 면제 사유에 해당하며, 심신미약자와 장애미수는 임의적 감경 사유에 해당한다.",
+    "ans": "O",
+    "point": "중지미수(필요적 감면) / 농아자·방조범(필요적 감경) / 불능미수(임의적 감면) / 심신미약·장애미수(임의적 감경)",
+    "exp": "정확합니다! 형법 제10조 제2항(2018년 개정)에 따라 심신미약자는 장애미수와 마찬가지로 임의적 감경('형을 감경할 수 있다') 사유입니다."
+  },
+  {
+    "cat": "형법 총론 · 위법성 조각사유 [FSRS 복습]",
+    "isReview": false,
+    "q": "형법상 자구행위는 과거의 부당한 침해로 청구권 실행이 현저히 곤란할 때 '자기 또는 타인의 청구권'을 보전하기 위해 상당한 이유가 있는 행위를 말하며, 야간 기타 불안스러운 상태하에서 공포·경악으로 과잉자구행위를 한 때에는 벌하지 아니한다.",
+    "ans": "X",
+    "point": "자구행위: 자기의 청구권만 가능(타인 X) + 야간과잉 처벌 면제 규정 없음",
+    "exp": "틀렸습니다! 자구행위는 '자기'의 청구권 보전만 가능하며(타인의 청구권 X), 야간 기타 불안스러운 상태에서의 과잉행위 처벌 면제 규정(제21조 제3항·제22조 제3항)은 정당방위와 긴급피난에만 있고 자구행위에는 없습니다."
+  },
+  {
+    "cat": "형법 각론 · 착오송금 가상자산 [FSRS 복습]",
+    "isReview": false,
+    "q": "갑이 타인으로부터 착오로 송금받은 가상자산(비트코인 등)을 임의로 소비한 경우, 갑에게 횡령죄가 성립하지 않을 뿐만 아니라 배임죄도 성립하지 않는다.",
+    "ans": "O",
+    "point": "착오송금 가상자산(비트코인) 임의소비 → 횡령죄 X, 배임죄 X (대법원 2021도9775)",
+    "exp": "정확합니다! 대법원 판례는 가상자산이 형법상 재물에 해당하지 않아 횡령죄가 성립하지 않고, 착오송금인과 피송금인 사이에 신임관계에 기초한 사무처리 관계도 인정되지 않아 배임죄 역시 성립하지 않는다고 보았습니다."
+  },
+  {
+    "cat": "헌법 · 2026 최신판례 O/X [신규]",
+    "isReview": false,
+    "q": "임기만료에 따른 비례대표국회의원선거에서 전국 유효투표총수의 100분의 3 이상을 득표한 정당에 대해서만 비례대표국회의원의석을 배분하도록 하는 공직선거법 제189조 제1항 제1호(저지조항)는 헌법에 위반된다.",
+    "ans": "O",
+    "point": "공직선거법 제189조 제1항 제1호(3% 저지조항) → 평등선거원칙 위배로 위헌 (헌재 2026.1.29. 2020헌마956 등)",
+    "exp": "정확합니다! 헌법재판소(2026.1.29. 2020헌마956 등)는 3% 저지조항이 저지선 미만 정당에 대한 투표를 사표로 만들어 투표의 성과가치와 정당을 차별하고 선거의 비례성을 약화시켜 평등선거원칙에 위배(선거권·피선거권·평등권 침해)된다고 위헌 결정했습니다."
+  }
+];
+
+let cur = 0;
+let correctCount = 0;
+let wrongItems = [];
+let answered = false;
+
+function loadQuestion() {
+  if (cur >= QUESTIONS.length) {
+    showResult();
+    return;
+  }
+  answered = false;
+  const item = QUESTIONS[cur];
+
+  const catBadge = document.getElementById('cat-text');
+  catBadge.innerText = item.cat;
+  if (item.isReview) {
+    catBadge.className = 'cat-badge review';
+  } else {
+    catBadge.className = 'cat-badge';
+  }
+
+  document.getElementById('q-num').innerText = `${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('score-badge').innerText = `진행 ${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('p-bar').style.width = `${((cur + 1) / QUESTIONS.length) * 100}%`;
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.className = 'btn-ox';
+  btnX.className = 'btn-ox';
+  btnO.disabled = false;
+  btnX.disabled = false;
+
+  document.getElementById('exp-card').style.display = 'none';
+  document.getElementById('schedule-badge').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function choose(pick) {
+  if (answered) return;
+  answered = true;
+
+  const item = QUESTIONS[cur];
+  const isRight = (pick === item.ans);
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.disabled = true;
+  btnX.disabled = true;
+
+  if (pick === 'O') {
+    btnO.classList.add(isRight ? 'correct' : 'wrong');
+  } else {
+    btnX.classList.add(isRight ? 'correct' : 'wrong');
+  }
+
+  const expCard = document.getElementById('exp-card');
+  const expTitle = document.getElementById('exp-title');
+  const expBody = document.getElementById('exp-body');
+  const schedBadge = document.getElementById('schedule-badge');
+
+  expCard.style.display = 'block';
+  expBody.innerText = item.exp;
+
+  if (isRight) {
+    correctCount++;
+    expCard.className = 'explanation-card correct';
+    expTitle.innerText = `⭕️ 정답입니다! (${item.point})`;
+    schedBadge.style.display = 'none';
+  } else {
+    wrongItems.push(item);
+    expCard.className = 'explanation-card wrong';
+    expTitle.innerText = `❌ 오답입니다! (정답: ${item.ans})`;
+    schedBadge.style.display = 'inline-block';
+  }
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = 'block';
+  if (cur === QUESTIONS.length - 1) {
+    btnNext.innerText = '결과 보기 ➔';
+  } else {
+    btnNext.innerText = '다음 문제로 ➔';
+  }
+}
+
+function goNext() {
+  cur++;
+  loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('play-area').style.display = 'none';
+  const compBox = document.getElementById('complete-box');
+  compBox.style.display = 'flex';
+
+  document.getElementById('res-correct').innerText = `${correctCount}개`;
+  document.getElementById('res-wrong').innerText = `${wrongItems.length}개`;
+
+  const resIcon = document.getElementById('res-icon');
+  const resTitle = document.getElementById('res-title');
+
+  if (correctCount === QUESTIONS.length) {
+    resIcon.innerText = '💯';
+    resTitle.innerText = `${QUESTIONS.length}/${QUESTIONS.length} 전원 만점 마스터!`;
+  } else {
+    resIcon.innerText = '🎯';
+    resTitle.innerText = `${QUESTIONS.length}문제 중 ${correctCount}문제 정답!`;
+  }
+
+  const wrongBox = document.getElementById('wrong-box');
+  const wrongList = document.getElementById('wrong-list');
+  if (wrongItems.length > 0) {
+    wrongBox.style.display = 'block';
+    wrongList.innerHTML = wrongItems.map((w, idx) => `
+      <div class="wrong-review-item">
+        <strong>${idx + 1}. [${w.cat}]</strong><br>
+        ${w.q}<br>
+        👉 <em>정답: ${w.ans} (${w.point})</em>
+      </div>
+    `).join('');
+  } else {
+    wrongBox.style.display = 'none';
+  }
+}
+
+function restart() {
+  cur = 0;
+  correctCount = 0;
+  wrongItems = [];
+  document.getElementById('play-area').style.display = 'block';
+  document.getElementById('complete-box').style.display = 'none';
+  loadQuestion();
+}
+
+function copyResult() {
+  let text = '';
+  if (wrongItems.length === 0) {
+    text = '오늘 퀴즈 다 맞음!';
+  } else {
+    text = `오늘 퀴즈 ${wrongItems.length}개 오답: ` + wrongItems.map(w => w.cat).join(', ');
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy-result');
+    btn.innerText = '✅ 복사 완료! 대화창에 붙여넣기 해 주세요';
+    setTimeout(() => {
+      btn.innerText = '📋 결과 복사하기';
+    }, 2500);
+  }).catch(() => {
+    alert(text);
+  });
+}
+
+// Initial render
+loadQuestion();
+</script>
+</body>
+</html>
