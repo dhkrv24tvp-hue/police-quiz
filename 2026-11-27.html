@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>11월 27일 경찰 암기 데일리 퀴즈</title>
+<style>
+  :root {
+    --bg-page: #f2f4f7;
+    --bg-card: #ffffff;
+    --text-main: #111827;
+    --text-sub: #4b5563;
+    --text-muted: #9ca3af;
+    --primary: #2563eb;
+    --primary-bg: #eff6ff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --border: #e5e7eb;
+    --radius-card: 20px;
+    --radius-btn: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 520px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 14px 4px;
+  }
+  .header h1 {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-badge {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .progress-wrap {
+    width: 100%;
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 25%;
+    transition: width 0.3s ease;
+  }
+  .quiz-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cat-badge {
+    background: var(--primary-bg);
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .cat-badge.review {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  .q-num {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .question-body {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--text-main);
+    word-break: keep-all;
+    min-height: 85px;
+    padding-top: 4px;
+  }
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn-ox {
+    padding: 18px 0;
+    font-size: 26px;
+    font-weight: 900;
+    border-radius: var(--radius-btn);
+    border: 2px solid var(--border);
+    background: #ffffff;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .btn-ox:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-ox.correct {
+    background: var(--success-bg) !important;
+    border-color: var(--success) !important;
+    color: var(--success) !important;
+  }
+  .btn-ox.wrong {
+    background: var(--danger-bg) !important;
+    border-color: var(--danger) !important;
+    color: var(--danger) !important;
+  }
+  .explanation-card {
+    display: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    animation: fadeIn 0.2s ease;
+  }
+  .explanation-card.correct {
+    background: var(--success-bg);
+    border: 1.5px solid rgba(22, 163, 74, 0.3);
+  }
+  .explanation-card.wrong {
+    background: var(--danger-bg);
+    border: 1.5px solid rgba(220, 38, 38, 0.3);
+  }
+  .exp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .explanation-card.correct .exp-header { color: var(--success); }
+  .explanation-card.wrong .exp-header { color: var(--danger); }
+  .schedule-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #ffffff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid currentColor;
+  }
+  .exp-content {
+    color: var(--text-sub);
+    font-weight: 500;
+    word-break: keep-all;
+  }
+  .btn-next {
+    display: none;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: var(--radius-btn);
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: auto;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: opacity 0.15s ease;
+  }
+  .btn-next:active { opacity: 0.85; }
+
+  .complete-box {
+    display: none;
+    text-align: center;
+    padding: 30px 10px 10px 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+  .complete-icon { font-size: 52px; }
+  .complete-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .complete-desc { font-size: 14px; color: var(--text-sub); line-height: 1.5; margin-bottom: 8px; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    background: var(--bg-page);
+    border-radius: 12px;
+    padding: 16px 12px;
+  }
+  .stat-card .val { font-size: 26px; font-weight: 900; color: var(--primary); }
+  .stat-card .lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
+  .wrong-review-box {
+    width: 100%;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+    margin-bottom: 12px;
+  }
+  .wrong-review-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--danger);
+    margin-bottom: 8px;
+  }
+  .wrong-review-item {
+    font-size: 12px;
+    color: #7f1d1d;
+    line-height: 1.45;
+    padding: 6px 0;
+    border-bottom: 1px dashed #fca5a5;
+  }
+  .wrong-review-item:last-child { border-bottom: none; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body ontouchstart="">
+
+<div class="header">
+  <h1>📝 오늘의 암기 퀴즈</h1>
+  <div class="score-badge" id="score-badge">진행 1 / 13</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar" id="p-bar" style="width: 25%;"></div>
+</div>
+
+<div class="quiz-card" id="quiz-card">
+  <!-- Active Question Area -->
+  <div id="play-area">
+    <div class="badge-row">
+      <span class="cat-badge" id="cat-text">경찰학 · 경찰활동 모델 [오답 1순위 복습]</span>
+      <span class="q-num" id="q-num">1 / 13</span>
+    </div>
+
+    <div class="question-body" id="q-text">
+      문제지향적 경찰활동(Eck & Spelman)은 범죄정보와 통계 분석기법·지리정보시스템(GIS)을 통합해 범죄다발지역(Hotspot) 집중순찰에 중점을 두며, 조사-분석-대응-평가의 SARA 모델은 정보주도적 경찰활동(ILP)의 핵심 절차이다.
+    </div>
+
+    <div class="choice-grid" id="choice-grid">
+      <button type="button" class="btn-ox" id="btn-o" onclick="choose('O')">⭕️ O</button>
+      <button type="button" class="btn-ox" id="btn-x" onclick="choose('X')">❌ X</button>
+    </div>
+
+    <div class="explanation-card" id="exp-card">
+      <div class="exp-header">
+        <span id="exp-title">정답입니다!</span>
+        <span class="schedule-badge" id="schedule-badge" style="display:none;">내일 점심 재출제 큐에 저장</span>
+      </div>
+      <div class="exp-content" id="exp-body">해설 내용</div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-next" onclick="goNext()">다음 문제로 ➔</button>
+  </div>
+
+  <!-- Complete Screen -->
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon" id="res-icon">🎯</div>
+    <div class="complete-title" id="res-title">오늘의 13문제 완료!</div>
+    <div class="complete-desc" id="res-desc">수고하셨습니다! 틀린 문제는 내일 점심 1시 퀴즈에 자동 재출제됩니다.</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="val" id="res-correct">0</div>
+        <div class="lbl">정답</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="res-wrong">0</div>
+        <div class="lbl">오답 (내일 재출제)</div>
+      </div>
+    </div>
+
+    <div class="wrong-review-box" id="wrong-box" style="display:none;">
+      <div class="wrong-review-title">📌 내일 점심 1시에 다시 도전할 오답 목록</div>
+      <div id="wrong-list"></div>
+    </div>
+
+    <button type="button" class="btn-next" id="btn-copy-result" style="display:block; background:#374151; margin-bottom:8px;" onclick="copyResult()">📋 결과 복사하기</button>
+    <button type="button" class="btn-next" style="display:block;" onclick="restart()">처음부터 다시 풀기 ↺</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    "cat": "경찰학 · 보관기간 숫자 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "경찰청 소관 기록·장비 보관기간 중 112 출동 영상촬영물은 수집 후 30일(필요 시 30일 연장), 경찰착용기록장치(바디캠)는 수집 후 30일(필요 시 90일 연장) 보관하며, 112 시스템 입력자료 중 경미 신고는 1년(연장 1년)간 보관한다.",
+    "ans": "O",
+    "point": "바디캠 30일(+90일) / 112 출동영상 30일(+30일) / 112 경미 1년(+1년)",
+    "exp": "정확합니다! 경찰착용기록장치(바디캠)는 수집 후 30일(+90일), 112 출동 영상촬영물은 30일(+30일), 112 시스템 경미 신고 입력자료는 1년(+1년) 보관합니다. (일반 신고는 3년+2년)"
+  },
+  {
+    "cat": "형소법 · 경미범죄 체포·구속 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "다액 50만원 이하의 벌금·구류·과료에 해당하는 경미범죄의 경우, 피의자의 주거가 부정하더라도 현행범인 체포는 가능하지만 법원의 구속영장에 의한 구속은 불가능하다.",
+    "ans": "X",
+    "point": "경미범죄: 현행범체포·구속 모두 주거부정 시 가능 (긴급체포만 절대 불가)",
+    "exp": "틀렸습니다! 다액 50만원 이하 경미범죄는 피의자의 주거가 부정할 때 현행범인 체포와 구속 모두 가능합니다. 주거가 부정해도 절대 불가능한 것은 '긴급체포'뿐입니다."
+  },
+  {
+    "cat": "형소법 · 증거동의와 증거능력 [오답 1순위 복습]",
+    "isReview": true,
+    "q": "수사기관이 영장 없이 위법하게 수집한 증거물(위수증)이나 공판정에서의 증언번복조서라도, 피고인이 공판정에서 이를 증거로 함에 동의하면 증거능력을 취득한다.",
+    "ans": "X",
+    "point": "위수증·증언번복조서·참여권 통지 누락 증거보전조서 → 동의해도 증거능력 X",
+    "exp": "틀렸습니다! 위법수집증거(위수증), 증언번복조서, 증거보전절차 참여권 통지 누락 증인신문조서는 피고인이 증거동의를 하더라도 증거능력을 취득할 수 없습니다."
+  },
+  {
+    "cat": "경찰학 · 보호 법익 구분",
+    "isReview": false,
+    "q": "경찰관의 112 신고 접수·처리, 감금된 자의 구호, 범죄피해자 구조청구권은 생명·신체뿐만 아니라 재산 보호까지 모두 포함되며, 가택수색이나 위험방지 출입 같은 장소·공간 수색은 생명·신체만 보호 법익으로 삼는다.",
+    "ans": "X",
+    "point": "112·감금자 구호·구조청구권 = 생명·신체만(재산 X) / 장소·공간 수색 = 재산 O",
+    "exp": "틀렸습니다! 정반대입니다. 112 신고 접수·처리, 감금된 자의 구호, 범죄피해자 구조청구권 등 사람을 직접 통제·구호하는 영역은 생명·신체만(재산 X) 포함하며, 가택수색·위험방지 출입처럼 장소나 공간을 뒤지는 경우는 생명·신체·재산 모두 포함합니다."
+  },
+  {
+    "cat": "경찰학 · 경찰윤리 (Cohen & Feldberg)",
+    "isReview": false,
+    "q": "Cohen & Feldberg의 경찰윤리 기준 중 동료 경찰관에게 면박을 주어 팀워크를 해치는 행위는 '냉정하고 객관적인 접근' 원칙 위반에 해당하며, 개인의 과거 피해 경험 때문에 절도범에게 분풀이하는 것은 '역할 한계·팀워크' 위반에 해당한다.",
+    "ans": "X",
+    "point": "동료 면박주기 = '역할 한계·팀워크' / 개인 감정·분풀이 = '냉정하고 객관적인 접근'",
+    "exp": "틀렸습니다! 동료에게 면박을 주는 행위는 '역할 한계·팀워크' 위반이고, 개인의 경험이나 감정으로 분풀이·단정하는 것은 '냉정하고 객관적인 접근' 위반에 해당합니다."
+  },
+  {
+    "cat": "경찰학 · 법령 형식 (대통령령 vs 행안부령)",
+    "isReview": false,
+    "q": "경찰관 직무집행법의 위임사항은 100% 대통령령으로 정하고 있으며, 경찰공무원법에서는 복제 관련 사항만 행정안전부령으로, 그 외 대다수 사항은 대통령령으로 정한다.",
+    "ans": "O",
+    "point": "경직법 = 100% 대통령령 / 경공법 = 복제만 행안부령, 대다수 대통령령",
+    "exp": "정확합니다! 경찰관 직무집행법(경직법)은 100% 대통령령에 위임되어 있고, 경찰공무원법(경공법)은 복제 관련만 행정안전부령·그 외 대다수는 대통령령으로 정합니다."
+  },
+  {
+    "cat": "경찰학 · 행정행위 효력 소멸",
+    "isReview": false,
+    "q": "적법하게 성립한 행정행위라도 기간 만료, 목적 달성, 대상 멸실 같은 법정 사유가 발생하면 행정청의 별도 의사표시 없이 당연히 효력이 소멸하는데, 이를 강학상 '철회'라고 한다.",
+    "ans": "X",
+    "point": "법정 사유·별도 의사표시 없이 당연 소멸 = '실효' / 후발사유·별도 의사표시 = '철회'",
+    "exp": "틀렸습니다! 행정청의 별도 의사표시 없이 법정 사유로 당연히 효력이 소멸하는 것은 '실효'입니다. '철회'는 후발사유로 인해 별도의 의사표시로 장래를 향해 효력을 소멸시키는 행위입니다."
+  },
+  {
+    "cat": "경찰학 · 위원회 위원 수",
+    "isReview": false,
+    "q": "국가경찰위원회, 시·도자치경찰위원회, 보안관찰처분심의위원회는 모두 7인으로 구성되며, 손실보상심의위원회는 7~9인, 감찰정보심의회는 3~5인, 감찰처분심의회는 3~7인으로 구성된다.",
+    "ans": "O",
+    "point": "국가·자치경찰·보안관찰 7인 / 손실보상 7~9인 / 감찰정보 3~5인 / 감찰처분 3~7인",
+    "exp": "정확합니다! 국가경찰위·시도자치경찰위·보안관찰처분심의위(7인), 손실보상심의위(7~9인), 감찰정보심의회(3~5인), 감찰처분심의회(3~7인) 모두 맞습니다."
+  },
+  {
+    "cat": "경찰학 · 청문·공청회·입법예고 기한",
+    "isReview": false,
+    "q": "행정절차법상 청문은 당사자에게 10일 전·청문주재자에게 7일 전 통지하고, 공청회는 개최 14일 전(다시 열면 7일 전) 통지하며, 법령의 입법예고 기간은 특별한 사정이 없으면 40일 이상(자치법규·행정예고는 20일 이상)이다.",
+    "ans": "O",
+    "point": "청문(당사자 10일·주재자 7일) / 공청회(14일, 재개최 7일) / 입법예고(법령 40일·자치법규/행정예고 20일)",
+    "exp": "정확합니다! 현행 행정절차법 제21조·제22조·제43조·제46조에 규정된 기한이 모두 정확합니다."
+  },
+  {
+    "cat": "형소법 · 재체포·재구속 제한",
+    "isReview": false,
+    "q": "법원의 체포·구속적부심사 결정(보증금 납입 조건부 석방 제외)에 의하여 석방된 피의자에 대해서는, 도망하거나 죄증을 인멸하는 경우를 제외하고는 동일한 범죄사실에 관하여 재차 체포하거나 구속하지 못한다.",
+    "ans": "O",
+    "point": "형소법 제214조의3 제1항: 적부심 석방 후 도망 또는 죄증인멸 외 재체포·재구속 불가",
+    "exp": "정확합니다! 형사소송법 제214조의3 제1항에 따라 적부심 석방 피의자는 도망하거나 죄증을 인멸하는 경우를 제외하고 동일 범죄사실로 재체포·재구속할 수 없습니다."
+  },
+  {
+    "cat": "형법 총론 · 미수범의 감면",
+    "isReview": false,
+    "q": "형법상 중지미수는 형을 반드시 감경 또는 면제해야 하는 필요적 감면 사유이지만, 불능미수는 형을 감경 또는 면제할 수 있는 임의적 감면 사유이다.",
+    "ans": "O",
+    "point": "중지미수(제26조) = 필요적 감면 / 불능미수(제27조) = 임의적 감면 / 방조범·농아자 = 필요적 감경",
+    "exp": "정확합니다! 형법 제26조 중지미수는 필요적 감면, 제27조 불능미수는 임의적 감면 사유입니다."
+  },
+  {
+    "cat": "형법 총론 · 신분과 공범 (제33조)",
+    "isReview": false,
+    "q": "비신분자가 신분자와 함께 직계존속을 살해한 경우, 형법 제33조 단서에 따라 비신분자는 중한 형으로 벌하지 않으므로 보통살인죄로 처벌되고 신분자만 존속살해죄로 처벌된다.",
+    "ans": "O",
+    "point": "부진정신분범(제33조 단서) 비신분자 → 보통살인죄 / 신분자 → 존속살해죄",
+    "exp": "정확합니다! 형법 제33조 단서에 따라 신분으로 인해 형의 경중이 있는 부진정신분범에서는 비신분자에게 중한 형(존속살해죄)을 과하지 않고 보통살인죄로 처벌합니다."
+  },
+  {
+    "cat": "형법 각론 · 해방감경",
+    "isReview": false,
+    "q": "인질을 체포·감금하여 상해에 이르게 한 인질상해·치상죄뿐만 아니라, 인질강도죄와 체포·감금죄에도 인질을 안전한 장소로 풀어준 때에는 형을 감경할 수 있는 해방감경 규정이 있다.",
+    "ans": "X",
+    "point": "인질상해·치상죄(제324조의6)만 임의적 해방감경 / 체포·감금죄·인질강도죄·인질살해 X",
+    "exp": "틀렸습니다! 형법상 해방감경 규정은 인질상해·치상죄(제324조의6, 임의적 감경)에만 있고, 체포·감금죄, 인질강도죄, 인질살해·치사죄에는 해방감경 규정이 없습니다."
+  }
+];
+
+let cur = 0;
+let correctCount = 0;
+let wrongItems = [];
+let answered = false;
+
+function loadQuestion() {
+  if (cur >= QUESTIONS.length) {
+    showResult();
+    return;
+  }
+  answered = false;
+  const item = QUESTIONS[cur];
+
+  const catBadge = document.getElementById('cat-text');
+  catBadge.innerText = item.cat;
+  if (item.isReview) {
+    catBadge.className = 'cat-badge review';
+  } else {
+    catBadge.className = 'cat-badge';
+  }
+
+  document.getElementById('q-num').innerText = `${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('score-badge').innerText = `진행 ${cur + 1} / ${QUESTIONS.length}`;
+  document.getElementById('p-bar').style.width = `${((cur + 1) / QUESTIONS.length) * 100}%`;
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.className = 'btn-ox';
+  btnX.className = 'btn-ox';
+  btnO.disabled = false;
+  btnX.disabled = false;
+
+  document.getElementById('exp-card').style.display = 'none';
+  document.getElementById('schedule-badge').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function choose(pick) {
+  if (answered) return;
+  answered = true;
+
+  const item = QUESTIONS[cur];
+  const isRight = (pick === item.ans);
+
+  const btnO = document.getElementById('btn-o');
+  const btnX = document.getElementById('btn-x');
+  btnO.disabled = true;
+  btnX.disabled = true;
+
+  if (pick === 'O') {
+    btnO.classList.add(isRight ? 'correct' : 'wrong');
+  } else {
+    btnX.classList.add(isRight ? 'correct' : 'wrong');
+  }
+
+  const expCard = document.getElementById('exp-card');
+  const expTitle = document.getElementById('exp-title');
+  const expBody = document.getElementById('exp-body');
+  const schedBadge = document.getElementById('schedule-badge');
+
+  expCard.style.display = 'block';
+  expBody.innerText = item.exp;
+
+  if (isRight) {
+    correctCount++;
+    expCard.className = 'explanation-card correct';
+    expTitle.innerText = `⭕️ 정답입니다! (${item.point})`;
+    schedBadge.style.display = 'none';
+  } else {
+    wrongItems.push(item);
+    expCard.className = 'explanation-card wrong';
+    expTitle.innerText = `❌ 오답입니다! (정답: ${item.ans})`;
+    schedBadge.style.display = 'inline-block';
+  }
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = 'block';
+  if (cur === QUESTIONS.length - 1) {
+    btnNext.innerText = '결과 보기 ➔';
+  } else {
+    btnNext.innerText = '다음 문제로 ➔';
+  }
+}
+
+function goNext() {
+  cur++;
+  loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('play-area').style.display = 'none';
+  const compBox = document.getElementById('complete-box');
+  compBox.style.display = 'flex';
+
+  document.getElementById('res-correct').innerText = `${correctCount}개`;
+  document.getElementById('res-wrong').innerText = `${wrongItems.length}개`;
+
+  const resIcon = document.getElementById('res-icon');
+  const resTitle = document.getElementById('res-title');
+
+  if (correctCount === QUESTIONS.length) {
+    resIcon.innerText = '💯';
+    resTitle.innerText = `${QUESTIONS.length}/${QUESTIONS.length} 전원 만점 마스터!`;
+  } else {
+    resIcon.innerText = '🎯';
+    resTitle.innerText = `${QUESTIONS.length}문제 중 ${correctCount}문제 정답!`;
+  }
+
+  const wrongBox = document.getElementById('wrong-box');
+  const wrongList = document.getElementById('wrong-list');
+  if (wrongItems.length > 0) {
+    wrongBox.style.display = 'block';
+    wrongList.innerHTML = wrongItems.map((w, idx) => `
+      <div class="wrong-review-item">
+        <strong>${idx + 1}. [${w.cat}]</strong><br>
+        ${w.q}<br>
+        👉 <em>정답: ${w.ans} (${w.point})</em>
+      </div>
+    `).join('');
+  } else {
+    wrongBox.style.display = 'none';
+  }
+}
+
+function restart() {
+  cur = 0;
+  correctCount = 0;
+  wrongItems = [];
+  document.getElementById('play-area').style.display = 'block';
+  document.getElementById('complete-box').style.display = 'none';
+  loadQuestion();
+}
+
+function copyResult() {
+  let text = '';
+  if (wrongItems.length === 0) {
+    text = '오늘 퀴즈 다 맞음!';
+  } else {
+    text = `오늘 퀴즈 ${wrongItems.length}개 오답: ` + wrongItems.map(w => w.cat).join(', ');
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy-result');
+    btn.innerText = '✅ 복사 완료! 대화창에 붙여넣기 해 주세요';
+    setTimeout(() => {
+      btn.innerText = '📋 결과 복사하기';
+    }, 2500);
+  }).catch(() => {
+    alert(text);
+  });
+}
+
+// Initial render
+loadQuestion();
+</script>
+</body>
+</html>
